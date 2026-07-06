@@ -1,4 +1,4 @@
-# 📚 My Courses SaaS
+# 📚 CourseFlow
 
 A modern Learning Management System (LMS) built with **Next.js**, **Convex**, **Tailwind CSS**, **shadcn/ui**, **Clerk Authentication**, and **Stripe** for subscription payments.
 
@@ -76,52 +76,8 @@ my-courses-saas/
 
 ---
 
-## ⚙️ Installation
 
-Clone the repository
 
-```bash
-git clone https://github.com/your-username/my-courses-saas.git
-```
-
-Navigate to the project
-
-```bash
-cd my-courses-saas
-```
-
-Install dependencies
-
-```bash
-npm install
-```
-
-Run the development server
-
-```bash
-npm run dev
-```
-
----
-
-## 🔑 Environment Variables
-
-Create a `.env.local` file and configure the following variables:
-
-```env
-NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=
-CLERK_SECRET_KEY=
-
-CONVEX_DEPLOYMENT=
-NEXT_PUBLIC_CONVEX_URL=
-
-STRIPE_SECRET_KEY=
-NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=
-STRIPE_WEBHOOK_SECRET=
-
-EMAIL_API_KEY=
-EMAIL_FROM=
-```
 
 ---
 
@@ -146,33 +102,8 @@ After a successful purchase, customers automatically receive:
 
 ---
 
-## 📸 Screenshots
 
-Add screenshots here.
 
-```
-/public/screenshots
-```
-
-Example:
-
-- Home Page
-- Course Page
-- Dashboard
-- Checkout
-- Profile
-
----
-
-## 🚀 Deployment
-
-Deploy easily on **Vercel**.
-
-```bash
-npm run build
-```
-
----
 
 ## Future Improvements
 
@@ -187,17 +118,6 @@ npm run build
 
 ---
 
-## Contributing
-
-Contributions are welcome.
-
-1. Fork the repository
-2. Create your feature branch
-3. Commit your changes
-4. Push to your branch
-5. Open a Pull Request
-
----
 
 ## License
 
@@ -207,6 +127,6 @@ This project is licensed under the MIT License.
 
 ## Author
 
-Developed by **Your Name**
+Developed by **Shahwaiz**
 
 If you like this project, don't forget to ⭐ the repository.
