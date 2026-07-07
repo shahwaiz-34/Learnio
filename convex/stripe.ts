@@ -167,12 +167,16 @@ export const createProPlanCheckoutSession = action({
 			throw new Error(`Rate limit exceeded.`);
 		}
 
+    if (!priceId) {
+      throw new ConvexError("Missing Stripe price ID for the selected plan.");
+    }
+
     const session = await stripe.checkout.sessions.create({
       customer: user.stripeCustomerId || undefined,
-      line_items: [{price: priceId, quantity: 1}],
+      line_items: [{ price: priceId, quantity: 1 }],
       mode: "subscription",
-      success_url: `${process.env.NEXT_PUBLIC_APP_URL}/pro/success?session_id={CHECKOUT_SESSION_ID}&year=${args.planId === "year"}`,
-      cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/pro`,
+      success_url: `${baseUrl}/pro/success?session_id={CHECKOUT_SESSION_ID}&year=${args.planId === "year"}`,
+      cancel_url: `${baseUrl}/pro`,
       metadata: {
         userId: String(user._id),
         planType: args.planId,

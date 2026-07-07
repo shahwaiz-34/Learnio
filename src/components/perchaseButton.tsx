@@ -41,27 +41,29 @@ const PurchaseButton = ({ courseId }: { courseId: Id<"courses"> }) => {
         clerkId: user.id,
       });
       if (checkoutUrl) {
-        window.location.href = checkoutUrl;
+        window.location.assign(checkoutUrl);
       } else {
         throw new Error("Failed to create checkout session");
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : typeof error === "string"
+            ? error
+            : "Something went wrong with the purchase.";
 
-      if(error.messsage.includes("Rate limit exceeded")) {
-        
-        toast.error("You are making purchases too quickly. Please wait a moment and try again.");
+      if (message.includes("Rate limit exceeded")) {
+        toast.error(
+          "You are making purchases too quickly. Please wait a moment and try again.",
+        );
       } else {
         toast.error(
-          error?.message ||
+          message ||
             "An error occurred while processing your purchase. Please try again.",
         );
       }
-      console.error("Error creating checkout session:", error);
-      const message =
-        error?.message ||
-        (typeof error === "string"
-          ? error
-          : "Something went wrong with the purchase.");
+      console.error("Error creating checkout session:", message);
       setErrorMessage(message);
     } finally {
       setIsLoading(false);

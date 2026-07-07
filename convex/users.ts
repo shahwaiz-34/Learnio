@@ -23,16 +23,16 @@ export const createUser = mutation({
       email: args.email,
       name: args.name,
       clerkId: args.clerkId,
-      stripeCustomerId: args.stripeCustomerId, 
+      stripeCustomerId: args.stripeCustomerId,
     });
 
-    return userId; 
+    return userId;
   },
 });
 
 export const getUserByClerkId = query({
   args: {
-    clerkId: v.string(),  
+    clerkId: v.string(),
   },
   handler: async (ctx, args) => {
     return await ctx.db
@@ -49,7 +49,9 @@ export const getUserByStripeCustomerId = query({
   handler: async (ctx, args) => {
     return await ctx.db
       .query("users")
-      .withIndex("by_stripeCustomerId", (q) => q.eq("stripeCustomerId", args.stripeCustomerId))
+      .withIndex("by_stripeCustomerId", (q) =>
+        q.eq("stripeCustomerId", args.stripeCustomerId),
+      )
       .unique();
   },
 });
@@ -78,14 +80,15 @@ export const recordCoursePurchase = mutation({
       courseId: args.courseId,
       amount: args.amount,
       purchaseDate: Date.now(),
-      stripePerchaseId: args.stripePurchaseId,
+      stripePurchaseId: args.stripePurchaseId,
     });
   },
 });
 
 export const getUserAccess = query({
   args: {
-    userId: v.id("users"), courseId: v.id("courses"),
+    userId: v.id("users"),
+    courseId: v.id("courses"),
   },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
@@ -111,16 +114,17 @@ export const getUserAccess = query({
 
     // check for individual course purchase
 
-    const purchase = await ctx.db.query("purchases")
-     .withIndex("by_userId_and_courseId", (q) => q.eq("userId", args.userId).eq("courseId", args.courseId))
-     .unique();
+    const purchase = await ctx.db
+      .query("purchases")
+      .withIndex("by_userId_and_courseId", (q) =>
+        q.eq("userId", args.userId).eq("courseId", args.courseId),
+      )
+      .unique();
 
-     if (purchase) {
+    if (purchase) {
       return { hasAccess: true, accessType: "course" };
+    }
 
-     }
-
-     return {hasAccess: false}
-
+    return { hasAccess: false };
   },
-}); 
+});
