@@ -8,7 +8,19 @@ const convex = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
 
 export async function POST(req: Request) {
   const body = await req.text();
-  const signature = req.headers.get("Stripe-Signature") as string;
+  const signature = req.headers.get("Stripe-Signature");
+
+  console.log("Stripe webhook received", {
+    path: "/api/webhooks/stripe",
+    method: req.method,
+    signaturePresent: Boolean(signature),
+    bodyLength: body.length,
+  });
+
+  if (!signature) {
+    console.error("Stripe webhook missing Stripe-Signature header");
+    return new Response("Missing Stripe-Signature header", { status: 400 });
+  }
 
   let event: Stripe.Event;
 
@@ -19,8 +31,8 @@ export async function POST(req: Request) {
       process.env.STRIPE_WEBHOOK_SECRET!,
     );
   } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : String(err);
-    console.log(`Webhook signature verification failed.`, message);
+    const errorMessage = err instanceof Error ? err.message : String(err);
+    console.error("Webhook signature verification failed.", errorMessage);
     return new Response("Webhook signature verification failed.", {
       status: 400,
     });
@@ -45,37 +57,78 @@ export async function POST(req: Request) {
         break;
     }
   } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : String(error);
-    console.error(`Error processing webhook ${event.type} : `, message);
-    return new Response("Error processing webhooks", { status: 400 });
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    console.error(`Error processing webhook (${event.type}):`, errorMessage);
+    return new Response("Error processing webhook", { status: 400 });
   }
-  return new Response(null, { status: 200 });
+
+  console.log(`Stripe webhook processed successfully: ${event.type}`);
+  return new Response(JSON.stringify({ success: true, type: event.type }), {
+    status: 200,
+    headers: { "Content-Type": "application/json" },
+  });
 }
 
 async function handleCheckoutSessionCompleted(
   session: Stripe.Checkout.Session,
 ) {
   const courseId = session.metadata?.courseId;
-  const stripeCustomerId = session.customer as string;
+  const metadataUserId = session.metadata?.userId;
+  const stripeCustomerId =
+    typeof session.customer === "string"
+      ? session.customer
+      : session.customer?.id;
 
-  if (!courseId || !stripeCustomerId) {
-    throw new Error("Missing courseId or stripeCustomerId");
-  }
-
-  const user = await convex.query(api.users.getUserByStripeCustomerId, {
+  console.log("checkout.session.completed payload", {
+    sessionId: session.id,
+    courseId,
+    metadataUserId,
     stripeCustomerId,
+    amount_total: session.amount_total,
+    payment_intent: session.payment_intent,
   });
-  if (!user) {
-    throw new Error("user not Found");
+
+  if (!courseId) {
+    throw new Error("Missing courseId in checkout session metadata");
   }
 
-  await convex.mutation(api.purchases.recordPurchase, {
+  let user;
+  if (metadataUserId) {
+    user = await convex.query(api.users.getUserById, {
+      userId: metadataUserId as Id<"users">,
+    });
+  } else if (stripeCustomerId) {
+    user = await convex.query(api.users.getUserByStripeCustomerId, {
+      stripeCustomerId,
+    });
+  }
+
+  if (!user) {
+    console.error("User not found for Stripe checkout session", {
+      sessionId: session.id,
+      courseId,
+      metadataUserId,
+      stripeCustomerId,
+    });
+    throw new Error("User not found");
+  }
+
+  const purchaseId = await convex.mutation(api.users.recordCoursePurchase, {
     userId: user._id,
     courseId: courseId as Id<"courses">,
-    amount: session.amount_total as number,
+    amount: session.amount_total ?? 0,
     stripePurchaseId: session.id,
   });
+
+  console.log("Recorded course purchase", {
+    userId: user._id,
+    courseId,
+    stripePurchaseId: session.id,
+    purchaseId,
+  });
 }
+
+//email
 
 async function handleSubscriptionUpsert(
   subscription: Stripe.Subscription,
@@ -83,7 +136,7 @@ async function handleSubscriptionUpsert(
 ) {
   if (subscription.status !== "active" || !subscription.latest_invoice) {
     console.log(
-      `Skipping subcription ${subscription.id} - Status: ${subscription.status}`,
+      `Skipping subscription ${subscription.id} - Status: ${subscription.status}`,
     );
     return;
   }
@@ -101,15 +154,34 @@ async function handleSubscriptionUpsert(
 
   try {
     const currentPeriodStart =
-      (subscription as any).current_period_start ??
-      (subscription as any).current_period?.start ??
+      (
+        subscription as Stripe.Subscription & {
+          current_period_start?: number;
+          current_period?: { start?: number; end?: number };
+        }
+      ).current_period_start ??
+      (
+        subscription as Stripe.Subscription & {
+          current_period?: { start?: number; end?: number };
+        }
+      ).current_period?.start ??
       0;
     const currentPeriodEnd =
-      (subscription as any).current_period_end ??
-      (subscription as any).current_period?.end ??
+      (
+        subscription as Stripe.Subscription & {
+          current_period_end?: number;
+          current_period?: { start?: number; end?: number };
+        }
+      ).current_period_end ??
+      (
+        subscription as Stripe.Subscription & {
+          current_period?: { start?: number; end?: number };
+        }
+      ).current_period?.end ??
       0;
     const cancelAtPeriodEnd =
-      (subscription as any).cancel_at_period_end ?? false;
+      (subscription as Stripe.Subscription & { cancel_at_period_end?: boolean })
+        .cancel_at_period_end ?? false;
 
     await convex.mutation(api.subscriptions.upsertSubscription, {
       userId: user._id,
@@ -121,7 +193,7 @@ async function handleSubscriptionUpsert(
       cancelAtPeriodEnd,
     });
     console.log(
-      `Subscription ${eventType}  for subscription ${subscription.id} `,
+      `Subscription ${eventType} for subscription ${subscription.id}`,
     );
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : String(error);

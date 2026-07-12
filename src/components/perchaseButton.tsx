@@ -22,7 +22,9 @@ const PurchaseButton = ({ courseId }: { courseId: Id<"courses"> }) => {
 
   const userAccess = useQuery(
     api.users.getUserAccess,
-    userData ? { userId: userData._id, courseId } : "skip",
+    userData && user?.id
+      ? { userId: userData._id, courseId, clerkId: user.id }
+      : "skip",
   ) || { hasAccess: false };
 
   const handlePurchase = async () => {

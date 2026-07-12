@@ -56,6 +56,15 @@ export const getUserByStripeCustomerId = query({
   },
 });
 
+export const getUserById = query({
+  args: {
+    userId: v.id("users"),
+  },
+  handler: async (ctx, args) => {
+    return await ctx.db.get(args.userId);
+  },
+});
+
 export const recordCoursePurchase = mutation({
   args: {
     userId: v.id("users"),
@@ -64,15 +73,26 @@ export const recordCoursePurchase = mutation({
     stripePurchaseId: v.string(),
   },
   handler: async (ctx, args) => {
-    const existingPurchase = await ctx.db
+    const existingByStripe = await ctx.db
+      .query("purchases")
+      .withIndex("by_stripePurchaseId", (q) =>
+        q.eq("stripePurchaseId", args.stripePurchaseId),
+      )
+      .collect();
+
+    if (existingByStripe.length > 0) {
+      return existingByStripe[0]._id;
+    }
+
+    const existingPurchases = await ctx.db
       .query("purchases")
       .withIndex("by_userId_and_courseId", (q) =>
         q.eq("userId", args.userId).eq("courseId", args.courseId),
       )
-      .unique();
+      .collect();
 
-    if (existingPurchase) {
-      return existingPurchase._id;
+    if (existingPurchases.length > 0) {
+      return existingPurchases[0]._id;
     }
 
     return await ctx.db.insert("purchases", {
@@ -89,19 +109,31 @@ export const getUserAccess = query({
   args: {
     userId: v.id("users"),
     courseId: v.id("courses"),
+    clerkId: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
-    if (!identity) {
+    if (!identity && !args.clerkId) {
       return { hasAccess: false, reason: "Not authenticated" };
     }
 
-    const user = await ctx.db.get(args.userId);
+    let user = await ctx.db.get(args.userId);
+    if (!user && args.clerkId) {
+      user = await ctx.db
+        .query("users")
+        .withIndex("by_clerkId", (q) => q.eq("clerkId", args.clerkId!))
+        .unique();
+    }
+
     if (!user) {
       return { hasAccess: false, reason: "User not found" };
     }
 
-    if (user.clerkId !== identity.subject) {
+    if (identity && user.clerkId !== identity.subject) {
+      return { hasAccess: false, reason: "Wrong user" };
+    }
+
+    if (!identity && args.clerkId && user.clerkId !== args.clerkId) {
       return { hasAccess: false, reason: "Wrong user" };
     }
 
@@ -114,14 +146,14 @@ export const getUserAccess = query({
 
     // check for individual course purchase
 
-    const purchase = await ctx.db
+    const purchases = await ctx.db
       .query("purchases")
       .withIndex("by_userId_and_courseId", (q) =>
         q.eq("userId", args.userId).eq("courseId", args.courseId),
       )
-      .unique();
+      .collect();
 
-    if (purchase) {
+    if (purchases.length > 0) {
       return { hasAccess: true, accessType: "course" };
     }
 

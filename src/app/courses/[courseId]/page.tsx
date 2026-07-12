@@ -36,13 +36,14 @@ const CourseDetailPage = () => {
 
   const userAccess = useQuery(
     api.users.getUserAccess,
-    userData?._id && courseId
+    userData?._id && courseId && user?.id
       ? {
           userId: userData._id,
           courseId: courseId as Id<"courses">,
+          clerkId: user.id,
         }
       : "skip",
-  ) || { hasAccess: false };
+  ) || { hasAccess: false, reason: "Loading" };
 
   // undefined => loading, convex
 
@@ -104,6 +105,9 @@ const CourseDetailPage = () => {
                 <p className="text-lg text-gray-600">This course is locked.</p>
                 <p className="text-gray-500 mb-4">
                   Enroll in this course to access all premium content.
+                </p>
+                <p className="text-sm text-red-600 mb-4">
+                  {userAccess.reason ? `Reason: ${userAccess.reason}` : null}
                 </p>
                 <p className="text-2xl font-bold mb-4">
                   ${courseData.price.toFixed(2)}

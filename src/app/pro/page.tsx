@@ -49,7 +49,11 @@ const ProPage = () => {
 
     setLoadingPlan(planId);
     try {
-      const result = await createProPlanCheckoutSession({ planId });
+      const result = await createProPlanCheckoutSession({
+        planId,
+        clerkId: user.id,
+        origin: window.location.origin,
+      });
       if (result.checkoutUrl) {
         window.location.assign(result.checkoutUrl);
       }

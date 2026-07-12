@@ -117,13 +117,28 @@ const stripeWebhook = httpAction(async (ctx, req) => {
     if (!userId || !courseId) {
       return new Response("Missing checkout metadata", { status: 400 });
     }
+    try {
+      console.log("Stripe webhook checkout.session.completed", {
+        sessionId: session.id,
+        userId,
+        courseId,
+        amount: session.amount_total,
+      });
 
-    await ctx.runMutation(api.users.recordCoursePurchase, {
-      userId: userId as Id<"users">,
-      courseId: courseId as Id<"courses">,
-      amount: session.amount_total ?? 0,
-      stripePurchaseId: session.payment_intent?.toString() ?? session.id,
-    });
+      await ctx.runMutation(api.users.recordCoursePurchase, {
+        userId: userId as Id<"users">,
+        courseId: courseId as Id<"courses">,
+        amount: session.amount_total ?? 0,
+        stripePurchaseId: session.payment_intent?.toString() ?? session.id,
+      });
+    } catch (err) {
+      console.error("Failed to record purchase from Stripe webhook", err, {
+        sessionId: session.id,
+        userId,
+        courseId,
+      });
+      return new Response("Error recording purchase", { status: 500 });
+    }
   }
 
   return new Response("Stripe webhook processed successfully", { status: 200 });

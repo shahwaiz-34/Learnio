@@ -26,7 +26,9 @@ export default defineSchema({
     amount: v.number(),
     purchaseDate: v.number(),
     stripePurchaseId: v.string(),
-  }).index("by_userId_and_courseId", ["userId", "courseId"]),
+  })
+    .index("by_userId_and_courseId", ["userId", "courseId"])
+    .index("by_stripePurchaseId", ["stripePurchaseId"]),
 
   subscriptions: defineTable({
     userId: v.id("users"),

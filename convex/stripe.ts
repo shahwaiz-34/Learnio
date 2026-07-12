@@ -5,13 +5,12 @@ import { api } from "./_generated/api";
 import stripe from "../src/lib/stripe";
 import ratelimit from "../src/lib/ratelimit";
 
-const baseUrl =
-  process.env.NEXT_PUBLIC_APP_URL ||
-  process.env.APP_URL ||
-  "http://localhost:3000";
-
 export const createCheckoutSession = action({
-  args: { courseId: v.id("courses"), clerkId: v.optional(v.string()) },
+  args: {
+    courseId: v.id("courses"),
+    clerkId: v.optional(v.string()),
+    origin: v.optional(v.string()),
+  },
   handler: async (ctx, args): Promise<{ checkoutUrl: string | null }> => {
     const identity = await ctx.auth.getUserIdentity();
     const clerkId = identity?.subject ?? args.clerkId;
@@ -35,17 +34,13 @@ export const createCheckoutSession = action({
     const rateLimitKey = `checkout-rate-limit:${user._id}`;
     const { success } = await ratelimit.limit(rateLimitKey);
 
-
-    if(!success) {
-      throw new Error(
-        `Rate limit exceeded`
-      );
+    if (!success) {
+      throw new Error(`Rate limit exceeded`);
     }
 
     const course = await ctx.runQuery(api.courses.getCourseById, {
       courseId: args.courseId,
     });
-
 
     if (!course) {
       throw new ConvexError("Course not found");
@@ -54,6 +49,12 @@ export const createCheckoutSession = action({
     const customerInfo = user.stripeCustomerId
       ? { customer: user.stripeCustomerId }
       : { customer_email: user.email };
+
+    const checkoutBaseUrl =
+      process.env.NEXT_PUBLIC_APP_URL ||
+      process.env.APP_URL ||
+      args.origin ||
+      "http://localhost:3000";
 
     const session = await stripe.checkout.sessions.create({
       ...customerInfo,
@@ -72,8 +73,8 @@ export const createCheckoutSession = action({
         },
       ],
       mode: "payment",
-      success_url: `${baseUrl}/courses/${String(args.courseId)}/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${baseUrl}/courses/${String(args.courseId)}`,
+      success_url: `${checkoutBaseUrl}/courses/${String(args.courseId)}/success?session_id={CHECKOUT_SESSION_ID}&courseId=${String(args.courseId)}`,
+      cancel_url: `${checkoutBaseUrl}/courses/${String(args.courseId)}`,
       metadata: {
         courseId: String(args.courseId),
         userId: String(user._id),
@@ -134,18 +135,27 @@ export const confirmCheckoutSession = action({
 });
 
 export const createProPlanCheckoutSession = action({
-
-  args: { planId: v.union(v.literal("month"), v.literal("year")) },
+  args: {
+    planId: v.union(v.literal("month"), v.literal("year")),
+    clerkId: v.optional(v.string()),
+    origin: v.optional(v.string()),
+  },
   handler: async (ctx, args): Promise<{ checkoutUrl: string | null }> => {
     const identity = await ctx.auth.getUserIdentity();
-    if (!identity) {
+    const clerkId = identity?.subject ?? args.clerkId;
+
+    if (!clerkId) {
       throw new ConvexError("Unauthorized");
     }
-   
+
+    if (identity && args.clerkId && args.clerkId !== identity.subject) {
+      throw new ConvexError("Mismatched clerkId");
+    }
+
     const user = await ctx.runQuery(api.users.getUserByClerkId, {
-      clerkId: identity.subject,
+      clerkId,
     });
- if (!user) {
+    if (!user) {
       throw new ConvexError("User not found");
     }
 
@@ -160,23 +170,18 @@ export const createProPlanCheckoutSession = action({
       throw new ConvexError("Invalid plan ID");
     }
 
-    // rate limit
-		const rateLimitKey = `pro-plan-rate-limit:${user._id}`;
-		const { success } = await ratelimit.limit(rateLimitKey);
-		if (!success) {
-			throw new Error(`Rate limit exceeded.`);
-		}
-
-    if (!priceId) {
-      throw new ConvexError("Missing Stripe price ID for the selected plan.");
-    }
+    const checkoutBaseUrl =
+      process.env.NEXT_PUBLIC_APP_URL ||
+      process.env.APP_URL ||
+      args.origin ||
+      "http://localhost:3000";
 
     const session = await stripe.checkout.sessions.create({
       customer: user.stripeCustomerId || undefined,
       line_items: [{ price: priceId, quantity: 1 }],
       mode: "subscription",
-      success_url: `${baseUrl}/pro/success?session_id={CHECKOUT_SESSION_ID}&year=${args.planId === "year"}`,
-      cancel_url: `${baseUrl}/pro`,
+      success_url: `${checkoutBaseUrl}/pro/success?session_id={CHECKOUT_SESSION_ID}&year=${args.planId === "year"}`,
+      cancel_url: `${checkoutBaseUrl}/pro`,
       metadata: {
         userId: String(user._id),
         planType: args.planId,
@@ -184,4 +189,4 @@ export const createProPlanCheckoutSession = action({
     });
     return { checkoutUrl: session.url || null };
   },
-})
+});

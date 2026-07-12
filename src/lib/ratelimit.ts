@@ -12,15 +12,34 @@ if (!redis) {
     limit: async (_key: string) => ({ success: true }),
   };
 } else {
-  // Cast the real Ratelimit to the minimal shape for consumers in this
-  // repo. This avoids exporting inside a conditional block which
-  // TypeScript disallows.
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  ratelimit = new Ratelimit({
-    redis,
-    limiter: Ratelimit.slidingWindow(3, "60 s"),
-  }) as unknown as MinimalRatelimit;
+  try {
+    const client = new Ratelimit({
+      redis,
+      limiter: Ratelimit.slidingWindow(3, "60 s"),
+    }) as unknown as MinimalRatelimit;
+
+    ratelimit = {
+      limit: async (key: string) => {
+        try {
+          return await client.limit(key);
+        } catch (error) {
+          console.warn(
+            "Upstash rate limiting failed, allowing request through:",
+            error,
+          );
+          return { success: true };
+        }
+      },
+    };
+  } catch (error) {
+    console.warn(
+      "Failed to initialize Upstash rate limiting, falling back to no-op:",
+      error,
+    );
+    ratelimit = {
+      limit: async (_key: string) => ({ success: true }),
+    };
+  }
 }
 
 export default ratelimit;
