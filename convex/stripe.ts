@@ -78,6 +78,8 @@ export const createCheckoutSession = action({
       metadata: {
         courseId: String(args.courseId),
         userId: String(user._id),
+        courseTitle: course.title,
+        courseImageUrl: course.imageUrl,
       },
     });
 

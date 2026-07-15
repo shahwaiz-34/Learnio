@@ -5,6 +5,8 @@ import { WebhookEvent } from "@clerk/nextjs/server";
 import { api } from "./_generated/api";
 import { Id } from "./_generated/dataModel";
 import stripe from "../src/lib/stripe";
+import resend from "../src/lib/resend";
+import WelcomeEmail from "../src/emails/WelcomeEmail";
 const http = httpRouter();
 
 const clerkWebhook = httpAction(async (ctx, req) => {
@@ -67,6 +69,21 @@ const clerkWebhook = httpAction(async (ctx, req) => {
         clerkId: id,
         stripeCustomerId: customer.id,
       });
+
+
+      //welcome 
+
+      if (process.env.NODE_ENV === "development") {
+				await resend.emails.send({
+					from: "MasterClass <onboarding@resend.dev>",
+					to: email,
+					subject: "Welcome to MasterClass!",
+					react: WelcomeEmail({ name, url: process.env.NEXT_PUBLIC_APP_URL! }),
+				});
+			}
+
+
+
     } catch (error) {
       console.error("Error creating user in Convex", error);
       return new Response("Error creating user", { status: 500 });

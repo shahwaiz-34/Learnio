@@ -34,6 +34,9 @@ export const upsertSubscription = mutation({
 
     if (existingSubscription) {
       await ctx.db.patch(existingSubscription._id, args);
+      await ctx.db.patch(args.userId, {
+        currentSubscriptionId: existingSubscription._id,
+      });
     } else {
       const subscriptionId = await ctx.db.insert("subscriptions", args);
       await ctx.db.patch(args.userId, {
