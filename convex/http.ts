@@ -71,7 +71,7 @@ const clerkWebhook = httpAction(async (ctx, req) => {
       });
 
 
-      //welcome 
+      //welcome email
 
       if (process.env.NODE_ENV === "development") {
 				await resend.emails.send({

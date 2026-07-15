@@ -106,9 +106,7 @@ const CourseDetailPage = () => {
                 <p className="text-gray-500 mb-4">
                   Enroll in this course to access all premium content.
                 </p>
-                <p className="text-sm text-red-600 mb-4">
-                  {userAccess.reason ? `Reason: ${userAccess.reason}` : null}
-                </p>
+              
                 <p className="text-2xl font-bold mb-4">
                   ${courseData.price.toFixed(2)}
                 </p>
