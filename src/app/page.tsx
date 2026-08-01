@@ -39,7 +39,7 @@ export default async function Home() {
               <Link href={`/courses/${course._id}`} className="cursor-pointer">
                 <CardHeader>
                   <Image
-                    src={course.imageUrl}
+                    src={"/course.jpg"}
                     alt={course.title}
                     width={640}
                     height={360}

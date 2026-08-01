@@ -59,7 +59,11 @@ const CourseDetailPage = () => {
       <Card className="max-w-4xl mx-auto">
         <CardHeader>
           <Image
-            src={courseData.imageUrl}
+            src={
+              courseData.imageUrl?.startsWith("/")
+                ? courseData.imageUrl
+                : "/course.jpg"
+            }
             alt={courseData.title}
             width={1200}
             height={600}
@@ -106,7 +110,7 @@ const CourseDetailPage = () => {
                 <p className="text-gray-500 mb-4">
                   Enroll in this course to access all premium content.
                 </p>
-              
+
                 <p className="text-2xl font-bold mb-4">
                   ${courseData.price.toFixed(2)}
                 </p>
