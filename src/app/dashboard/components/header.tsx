@@ -9,7 +9,8 @@ import {
   Moon, 
   Plus, 
   ChevronRight,
-  Menu
+  PanelLeft,
+ 
 } from "lucide-react";
 
 export default function Header() {
@@ -18,11 +19,10 @@ export default function Header() {
   return (
     <header className="sticky top-0 z-30 flex items-center justify-between h-16 px-4 md:px-6 bg-white border-b border-gray-200">
       
-      {/* Left Section: Mobile Menu & Breadcrumbs */}
       <div className="flex items-center gap-4">
-        {/* Mobile menu toggle (optional, for smaller screens) */}
+       
         <button className="p-1 md:hidden text-gray-600 hover:bg-gray-100 rounded-md transition-colors">
-          <Menu className="w-5 h-5" />
+          <PanelLeft className="w-5 h-5" />
         </button>
 
         {/* Breadcrumbs (Hidden on very small screens) */}

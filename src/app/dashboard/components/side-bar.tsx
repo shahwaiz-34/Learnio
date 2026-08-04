@@ -12,7 +12,7 @@ import {
   Wallet,
   Settings,
   User,
-  PanelLeft,
+  BookOpen,
   MoreHorizontal
 } from "lucide-react";
 
@@ -20,19 +20,20 @@ const menuGroups = [
   {
     title: "DASHBOARD",
     items: [
-      { name: "Courses Dashboard", icon: LayoutDashboard, href: "/dashboard" },
-      { name: "Students", icon: Users, href: "/students" },
-      { name: "Purchases", icon: ShoppingBag, href: "/purchases" },
-      { name: "Subscriptions", icon: CreditCard, href: "/subscriptions" },
-      { name: "Analytics", icon: BarChart2, href: "/analytics" },
-      { name: "Payments", icon: Wallet, href: "/payments" },
+      { name: "Dashboard", icon: LayoutDashboard, href: "/dashboard" },
+      { name: "Students", icon: Users, href: "/dashboard/students" },
+      { name: "Courses", icon: BookOpen, href: "/dashboard/courses" },
+      { name: "Purchases", icon: ShoppingBag, href: "/dashboard/purchases" },
+      { name: "Subscriptions", icon: CreditCard, href: "/dashboard/subscriptions" },
+      { name: "Analytics", icon: BarChart2, href: "/dashboard/analytics" },
+      { name: "Payments", icon: Wallet, href: "/dashboard/payments" },
     ],
   },
   {
     title: "SETTINGS",
     items: [
-      { name: "Settings", icon: Settings, href: "/settings" },
-      { name: "Profile", icon: User, href: "/profile" },
+      { name: "Settings", icon: Settings, href: "/dashboard/settings" },
+      { name: "Profile", icon: User, href: "/dashboard/profile" },
     ],
   },
 ];
@@ -51,36 +52,12 @@ export default function SideBar() {
     <aside
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      className={`relative flex flex-col h-screen bg-white border-r border-gray-200 transition-all duration-300 ease-in-out z-40 ${
+      className={`relative flex flex-col h-screen bg-white border-r border-gray-200 transition-all duration-300 ease-in-out z-40 scrollbar-none ${
         isCollapsed ? "w-20" : "w-64"
       }`}
     >
       {/* Header / Logo Area */}
-      <div className="flex items-center justify-between h-16 px-4 py-4 mt-2">
-        <div className="flex items-center gap-2 overflow-hidden">
-          {/* Logo Circle */}
-          <div className="flex items-center justify-center min-w-10 min-h-10 bg-[#0a0a0b] text-white rounded-full font-bold text-xl">
-            {isCollapsed ? "L" : "le"}
-          </div>
-          {/* Learnio Brand Name */}
-          {!isCollapsed && (
-            <span className="text-xl font-bold tracking-tight text-[#0a0a0b] whitespace-nowrap opacity-100 transition-opacity duration-300">
-              Learnio.
-            </span>
-          )}
-        </div>
-
-        {/* Toggle Button */}
-        <button
-          onClick={() => setIsManualCollapse(!isManualCollapse)}
-          className={`absolute ${
-            isCollapsed ? "right-[-20px] top-6" : "right-4 top-6"
-          } bg-white hover:bg-gray-50 text-gray-900 transition-all z-10`}
-          aria-label={isManualCollapse ? "Expand Sidebar" : "Collapse Sidebar"}
-        >
-          <PanelLeft size={24} strokeWidth={1.5} />
-        </button>
-      </div>
+      
 
       {/* Navigation Links */}
       <div className="flex-1 overflow-y-auto overflow-x-hidden py-4 custom-scrollbar mt-4">
