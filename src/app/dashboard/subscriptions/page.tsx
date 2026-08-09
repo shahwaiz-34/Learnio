@@ -1,35 +1,35 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
-import { 
-  Users, 
-  CreditCard, 
-  TrendingUp, 
-  DollarSign, 
-  Search, 
-  Filter, 
-  RefreshCw, 
-  Eye, 
-  XCircle, 
-  Settings, 
-  CheckCircle2, 
+import {
+  Users,
+  CreditCard,
+  TrendingUp,
+  DollarSign,
+  Search,
+  Filter,
+  RefreshCw,
+  Eye,
+  XCircle,
+  Settings,
+  CheckCircle2,
   AlertCircle,
-  CalendarCheck
+  CalendarCheck,
 } from "lucide-react";
-import { 
-  LineChart, 
-  Line, 
-  PieChart, 
-  Pie, 
-  Cell, 
-  BarChart, 
-  Bar, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
+import {
+  LineChart,
+  Line,
+  PieChart,
+  Pie,
+  Cell,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
   ResponsiveContainer,
-  Legend 
+  Legend,
 } from "recharts";
 import { toast } from "sonner";
 
@@ -54,7 +54,7 @@ const INITIAL_SUBSCRIPTIONS: Subscription[] = [
     status: "Active",
     renewalDate: "Aug 30, 2026",
     autoRenew: true,
-    price: 29.99
+    price: 29.99,
   },
   {
     id: "SUB-102",
@@ -64,7 +64,7 @@ const INITIAL_SUBSCRIPTIONS: Subscription[] = [
     status: "Active",
     renewalDate: "Jul 20, 2027",
     autoRenew: true,
-    price: 299.99
+    price: 299.99,
   },
   {
     id: "SUB-103",
@@ -74,7 +74,7 @@ const INITIAL_SUBSCRIPTIONS: Subscription[] = [
     status: "Cancelled",
     renewalDate: "Expired",
     autoRenew: false,
-    price: 29.99
+    price: 29.99,
   },
   {
     id: "SUB-104",
@@ -84,7 +84,7 @@ const INITIAL_SUBSCRIPTIONS: Subscription[] = [
     status: "Active",
     renewalDate: "Sep 15, 2026",
     autoRenew: true,
-    price: 299.99
+    price: 299.99,
   },
   {
     id: "SUB-105",
@@ -94,7 +94,7 @@ const INITIAL_SUBSCRIPTIONS: Subscription[] = [
     status: "Active",
     renewalDate: "Aug 18, 2026",
     autoRenew: true,
-    price: 29.99
+    price: 29.99,
   },
   {
     id: "SUB-106",
@@ -104,8 +104,8 @@ const INITIAL_SUBSCRIPTIONS: Subscription[] = [
     status: "Cancelled",
     renewalDate: "Expired",
     autoRenew: false,
-    price: 299.99
-  }
+    price: 299.99,
+  },
 ];
 
 // --- Mock Datasets for Recharts ---
@@ -129,21 +129,29 @@ const REVENUE_BY_PLAN_DATA = [
 ];
 
 export default function SubscriptionsPage() {
-  const [subscriptions, setSubscriptions] = useState<Subscription[]>(INITIAL_SUBSCRIPTIONS);
+  const [subscriptions, setSubscriptions] = useState<Subscription[]>(
+    INITIAL_SUBSCRIPTIONS,
+  );
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedPlanFilter, setSelectedPlanFilter] = useState<"All" | "Monthly" | "Yearly">("All");
-  const [selectedStatusFilter, setSelectedStatusFilter] = useState<"All" | "Active" | "Cancelled">("All");
+  const [selectedPlanFilter, setSelectedPlanFilter] = useState<
+    "All" | "Monthly" | "Yearly"
+  >("All");
+  const [selectedStatusFilter, setSelectedStatusFilter] = useState<
+    "All" | "Active" | "Cancelled"
+  >("All");
 
   // --- Dynamic Filtering ---
   const filteredSubscriptions = useMemo(() => {
     return subscriptions.filter((sub) => {
-      const matchesSearch = 
+      const matchesSearch =
         sub.userName.toLowerCase().includes(searchTerm.toLowerCase()) ||
         sub.userEmail.toLowerCase().includes(searchTerm.toLowerCase()) ||
         sub.id.toLowerCase().includes(searchTerm.toLowerCase());
 
-      const matchesPlan = selectedPlanFilter === "All" || sub.plan === selectedPlanFilter;
-      const matchesStatus = selectedStatusFilter === "All" || sub.status === selectedStatusFilter;
+      const matchesPlan =
+        selectedPlanFilter === "All" || sub.plan === selectedPlanFilter;
+      const matchesStatus =
+        selectedStatusFilter === "All" || sub.status === selectedStatusFilter;
 
       return matchesSearch && matchesPlan && matchesStatus;
     });
@@ -158,12 +166,19 @@ export default function SubscriptionsPage() {
 
     setSubscriptions((prev) =>
       prev.map((item) =>
-        item.id === sub.id ? { ...item, status: "Cancelled", autoRenew: false, renewalDate: "Expired" } : item
-      )
+        item.id === sub.id
+          ? {
+              ...item,
+              status: "Cancelled",
+              autoRenew: false,
+              renewalDate: "Expired",
+            }
+          : item,
+      ),
     );
 
     toast.warning("Subscription Cancelled", {
-      description: `Subscription ${sub.id} for ${sub.userName} has been cancelled.`
+      description: `Subscription ${sub.id} for ${sub.userName} has been cancelled.`,
     });
   };
 
@@ -177,93 +192,141 @@ export default function SubscriptionsPage() {
 
   return (
     <div className="max-w-7xl mx-auto space-y-8 pb-12">
-      
       {/* 1. HEADER SECTION */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gray-200 pb-5">
         <div>
-          <h1 className="text-3xl font-bold text-[#0a0a0b] tracking-tight">Subscriptions</h1>
-          <p className="text-sm text-gray-500 mt-1">Manage recurring payments and subscription plans.</p>
+          <h1 className="text-3xl font-bold text-[#0a0a0b] tracking-tight">
+            Subscriptions
+          </h1>
+          <p className="text-sm text-gray-500 mt-1">
+            Manage recurring payments and subscription plans.
+          </p>
         </div>
       </div>
 
       {/* 2. TOP METRIC CARDS */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-        
         {/* Active Plans Card */}
         <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm space-y-2">
           <div className="flex items-center justify-between text-gray-500">
-            <span className="text-xs font-semibold uppercase tracking-wider">Active Plans</span>
+            <span className="text-xs font-semibold uppercase tracking-wider">
+              Active Plans
+            </span>
             <div className="p-2 bg-green-50 rounded-xl text-green-600">
               <CheckCircle2 className="w-5 h-5" />
             </div>
           </div>
           <p className="text-3xl font-bold text-[#0a0a0b]">126</p>
-          <p className="text-xs text-green-600 font-medium">+12% from last month</p>
+          <p className="text-xs text-green-600 font-medium">
+            +12% from last month
+          </p>
         </div>
 
         {/* Monthly Plans Card */}
         <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm space-y-2">
           <div className="flex items-center justify-between text-gray-500">
-            <span className="text-xs font-semibold uppercase tracking-wider">Monthly Plans</span>
+            <span className="text-xs font-semibold uppercase tracking-wider">
+              Monthly Plans
+            </span>
             <div className="p-2 bg-blue-50 rounded-xl text-blue-600">
               <CreditCard className="w-5 h-5" />
             </div>
           </div>
           <p className="text-3xl font-bold text-[#0a0a0b]">84</p>
-          <p className="text-xs text-gray-500 font-medium">66.7% of total subscriber base</p>
+          <p className="text-xs text-gray-500 font-medium">
+            66.7% of total subscriber base
+          </p>
         </div>
 
         {/* Yearly Plans Card */}
         <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm space-y-2">
           <div className="flex items-center justify-between text-gray-500">
-            <span className="text-xs font-semibold uppercase tracking-wider">Yearly Plans</span>
+            <span className="text-xs font-semibold uppercase tracking-wider">
+              Yearly Plans
+            </span>
             <div className="p-2 bg-purple-50 rounded-xl text-purple-600">
               <CalendarCheck className="w-5 h-5" />
             </div>
           </div>
           <p className="text-3xl font-bold text-[#0a0a0b]">42</p>
-          <p className="text-xs text-gray-500 font-medium">33.3% of total subscriber base</p>
+          <p className="text-xs text-gray-500 font-medium">
+            33.3% of total subscriber base
+          </p>
         </div>
 
         {/* MRR Card */}
         <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm space-y-2">
           <div className="flex items-center justify-between text-gray-500">
-            <span className="text-xs font-semibold uppercase tracking-wider">MRR</span>
+            <span className="text-xs font-semibold uppercase tracking-wider">
+              MRR
+            </span>
             <div className="p-2 bg-emerald-50 rounded-xl text-emerald-600">
               <DollarSign className="w-5 h-5" />
             </div>
           </div>
           <p className="text-3xl font-bold text-[#0a0a0b]">$4,250</p>
-          <p className="text-xs text-emerald-600 font-medium">+8.5% recurring growth</p>
+          <p className="text-xs text-emerald-600 font-medium">
+            +8.5% recurring growth
+          </p>
         </div>
-
       </div>
 
       {/* 3. CHARTS SECTION */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        
         {/* Subscription Growth (Line Chart) */}
         <div className="lg:col-span-6 bg-white p-6 rounded-2xl border border-gray-200 shadow-sm flex flex-col justify-between">
           <div className="mb-4">
-            <span className="text-xs font-semibold text-blue-600 uppercase tracking-wider">Growth Trend</span>
-            <h2 className="text-base font-bold text-[#0a0a0b] mt-0.5">Subscription Growth</h2>
+            <span className="text-xs font-semibold text-blue-600 uppercase tracking-wider">
+              Growth Trend
+            </span>
+            <h2 className="text-base font-bold text-[#0a0a0b] mt-0.5">
+              Subscription Growth
+            </h2>
           </div>
           <div className="w-full h-[240px]">
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={GROWTH_DATA} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f3f4f6" />
-                <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#6b7280' }} />
-                <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#6b7280' }} />
-                <Tooltip 
-                  contentStyle={{ borderRadius: '12px', border: '1px solid #e5e7eb' }}
-                  formatter={(val: number) => [`${val} Active Subs`, "Total"]}
+              <LineChart
+                data={GROWTH_DATA}
+                margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
+              >
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  vertical={false}
+                  stroke="#f3f4f6"
                 />
-                <Line 
-                  type="monotone" 
-                  dataKey="subscribers" 
-                  stroke="#2563eb" 
+                <XAxis
+                  dataKey="month"
+                  axisLine={false}
+                  tickLine={false}
+                  tick={{ fontSize: 12, fill: "#6b7280" }}
+                />
+                <YAxis
+                  axisLine={false}
+                  tickLine={false}
+                  tick={{ fontSize: 12, fill: "#6b7280" }}
+                />
+                <Tooltip
+                  contentStyle={{
+                    borderRadius: "12px",
+                    border: "1px solid #e5e7eb",
+                  }}
+                  formatter={(value) => {
+                    const count =
+                      typeof value === "number" ? value : Number(value ?? 0);
+                    return [`${count} Active Subs`, "Total"];
+                  }}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="subscribers"
+                  stroke="#2563eb"
                   strokeWidth={3}
-                  dot={{ r: 4, fill: '#2563eb', strokeWidth: 2, stroke: '#fff' }}
+                  dot={{
+                    r: 4,
+                    fill: "#2563eb",
+                    strokeWidth: 2,
+                    stroke: "#fff",
+                  }}
                 />
               </LineChart>
             </ResponsiveContainer>
@@ -273,8 +336,12 @@ export default function SubscriptionsPage() {
         {/* Plan Distribution (Donut Chart) */}
         <div className="lg:col-span-3 bg-white p-6 rounded-2xl border border-gray-200 shadow-sm flex flex-col justify-between">
           <div className="mb-2">
-            <span className="text-xs font-semibold text-purple-600 uppercase tracking-wider">Breakdown</span>
-            <h2 className="text-base font-bold text-[#0a0a0b] mt-0.5">Plan Distribution</h2>
+            <span className="text-xs font-semibold text-purple-600 uppercase tracking-wider">
+              Breakdown
+            </span>
+            <h2 className="text-base font-bold text-[#0a0a0b] mt-0.5">
+              Plan Distribution
+            </h2>
           </div>
           <div className="w-full h-[200px] flex items-center justify-center">
             <ResponsiveContainer width="100%" height="100%">
@@ -292,7 +359,12 @@ export default function SubscriptionsPage() {
                     <Cell key={`cell-${index}`} fill={entry.color} />
                   ))}
                 </Pie>
-                <Tooltip contentStyle={{ borderRadius: '8px', border: '1px solid #e5e7eb' }} />
+                <Tooltip
+                  contentStyle={{
+                    borderRadius: "8px",
+                    border: "1px solid #e5e7eb",
+                  }}
+                />
                 <Legend verticalAlign="bottom" height={36} iconType="circle" />
               </PieChart>
             </ResponsiveContainer>
@@ -302,35 +374,66 @@ export default function SubscriptionsPage() {
         {/* Revenue by Plan (Bar Chart) */}
         <div className="lg:col-span-3 bg-white p-6 rounded-2xl border border-gray-200 shadow-sm flex flex-col justify-between">
           <div className="mb-2">
-            <span className="text-xs font-semibold text-emerald-600 uppercase tracking-wider">Revenue Stream</span>
-            <h2 className="text-base font-bold text-[#0a0a0b] mt-0.5">Revenue by Plan</h2>
+            <span className="text-xs font-semibold text-emerald-600 uppercase tracking-wider">
+              Revenue Stream
+            </span>
+            <h2 className="text-base font-bold text-[#0a0a0b] mt-0.5">
+              Revenue by Plan
+            </h2>
           </div>
           <div className="w-full h-[200px]">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={REVENUE_BY_PLAN_DATA} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f3f4f6" />
-                <XAxis dataKey="plan" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#6b7280' }} />
-                <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#6b7280' }} tickFormatter={(v) => `$${v}`} />
-                <Tooltip 
-                  contentStyle={{ borderRadius: '8px', border: '1px solid #e5e7eb' }}
-                  formatter={(val: number) => [`$${val.toLocaleString()}`, "Revenue"]}
+              <BarChart
+                data={REVENUE_BY_PLAN_DATA}
+                margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
+              >
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  vertical={false}
+                  stroke="#f3f4f6"
                 />
-                <Bar dataKey="revenue" fill="#10b981" radius={[6, 6, 0, 0]} barSize={36} />
+                <XAxis
+                  dataKey="plan"
+                  axisLine={false}
+                  tickLine={false}
+                  tick={{ fontSize: 12, fill: "#6b7280" }}
+                />
+                <YAxis
+                  axisLine={false}
+                  tickLine={false}
+                  tick={{ fontSize: 12, fill: "#6b7280" }}
+                  tickFormatter={(v) => `$${v}`}
+                />
+                <Tooltip
+                  contentStyle={{
+                    borderRadius: "8px",
+                    border: "1px solid #e5e7eb",
+                  }}
+                  formatter={(value) => {
+                    const amount =
+                      typeof value === "number" ? value : Number(value ?? 0);
+                    return [`$${amount.toLocaleString()}`, "Revenue"];
+                  }}
+                />
+                <Bar
+                  dataKey="revenue"
+                  fill="#10b981"
+                  radius={[6, 6, 0, 0]}
+                  barSize={36}
+                />
               </BarChart>
             </ResponsiveContainer>
           </div>
         </div>
-
       </div>
 
       {/* 4. FILTERS BAR */}
       <div className="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm space-y-4">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          
           {/* Search Bar */}
           <div className="relative flex-1 max-w-md">
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-            <input 
+            <input
               type="text"
               placeholder="Search user name, email, or subscription ID..."
               value={searchTerm}
@@ -369,7 +472,9 @@ export default function SubscriptionsPage() {
             </select>
 
             {/* Reset Filters */}
-            {(searchTerm || selectedPlanFilter !== "All" || selectedStatusFilter !== "All") && (
+            {(searchTerm ||
+              selectedPlanFilter !== "All" ||
+              selectedStatusFilter !== "All") && (
               <button
                 onClick={() => {
                   setSearchTerm("");
@@ -383,7 +488,6 @@ export default function SubscriptionsPage() {
               </button>
             )}
           </div>
-
         </div>
       </div>
 
@@ -391,7 +495,8 @@ export default function SubscriptionsPage() {
       <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
         <div className="p-4 border-b border-gray-100 bg-gray-50/50 flex justify-between items-center">
           <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
-            Showing {filteredSubscriptions.length} of {subscriptions.length} Subscriptions
+            Showing {filteredSubscriptions.length} of {subscriptions.length}{" "}
+            Subscriptions
           </p>
         </div>
 
@@ -410,8 +515,10 @@ export default function SubscriptionsPage() {
             <tbody className="divide-y divide-gray-100">
               {filteredSubscriptions.length > 0 ? (
                 filteredSubscriptions.map((sub) => (
-                  <tr key={sub.id} className="hover:bg-gray-50/60 transition-colors">
-                    
+                  <tr
+                    key={sub.id}
+                    className="hover:bg-gray-50/60 transition-colors"
+                  >
                     {/* User */}
                     <td className="py-4 px-6">
                       <div className="flex items-center gap-3">
@@ -419,28 +526,38 @@ export default function SubscriptionsPage() {
                           {sub.userName.charAt(0)}
                         </div>
                         <div>
-                          <p className="font-semibold text-[#0a0a0b]">{sub.userName}</p>
-                          <p className="text-xs text-gray-400">{sub.userEmail}</p>
+                          <p className="font-semibold text-[#0a0a0b]">
+                            {sub.userName}
+                          </p>
+                          <p className="text-xs text-gray-400">
+                            {sub.userEmail}
+                          </p>
                         </div>
                       </div>
                     </td>
 
                     {/* Plan */}
                     <td className="py-4 px-6">
-                      <span className={`inline-flex items-center px-2.5 py-1 rounded-md text-xs font-medium ${
-                        sub.plan === "Yearly" ? "bg-purple-50 text-purple-700 border border-purple-200" : "bg-blue-50 text-blue-700 border border-blue-200"
-                      }`}>
+                      <span
+                        className={`inline-flex items-center px-2.5 py-1 rounded-md text-xs font-medium ${
+                          sub.plan === "Yearly"
+                            ? "bg-purple-50 text-purple-700 border border-purple-200"
+                            : "bg-blue-50 text-blue-700 border border-blue-200"
+                        }`}
+                      >
                         {sub.plan} (${sub.price}/yr)
                       </span>
                     </td>
 
                     {/* Status */}
                     <td className="py-4 px-6">
-                      <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold ${
-                        sub.status === "Active"
-                          ? "bg-green-100 text-green-800 border border-green-200"
-                          : "bg-gray-100 text-gray-600 border border-gray-200"
-                      }`}>
+                      <span
+                        className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold ${
+                          sub.status === "Active"
+                            ? "bg-green-100 text-green-800 border border-green-200"
+                            : "bg-gray-100 text-gray-600 border border-gray-200"
+                        }`}
+                      >
                         {sub.status === "Active" ? (
                           <CheckCircle2 className="w-3 h-3 text-green-600" />
                         ) : (
@@ -457,7 +574,9 @@ export default function SubscriptionsPage() {
 
                     {/* Auto Renew */}
                     <td className="py-4 px-6">
-                      <span className={`text-xs font-semibold ${sub.autoRenew ? "text-green-600" : "text-gray-400"}`}>
+                      <span
+                        className={`text-xs font-semibold ${sub.autoRenew ? "text-green-600" : "text-gray-400"}`}
+                      >
                         {sub.autoRenew ? "Yes" : "No"}
                       </span>
                     </td>
@@ -465,7 +584,6 @@ export default function SubscriptionsPage() {
                     {/* Actions */}
                     <td className="py-4 px-6 text-right">
                       <div className="flex items-center justify-end gap-1">
-                        
                         {/* View Action */}
                         <button
                           onClick={() => handleView(sub)}
@@ -493,15 +611,16 @@ export default function SubscriptionsPage() {
                         >
                           <XCircle className="w-4 h-4" />
                         </button>
-
                       </div>
                     </td>
-
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan={6} className="text-center py-12 text-gray-500 text-sm">
+                  <td
+                    colSpan={6}
+                    className="text-center py-12 text-gray-500 text-sm"
+                  >
                     No subscriptions match your search or filter criteria.
                   </td>
                 </tr>
@@ -510,7 +629,6 @@ export default function SubscriptionsPage() {
           </table>
         </div>
       </div>
-
     </div>
   );
 }

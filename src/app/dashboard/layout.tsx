@@ -1,5 +1,5 @@
 import React from "react";
-import SideBar from "./components/side-bar.tsx";
+import SideBar from "./components/side-bar";
 import Header from "./components/header";
 import { SidebarProvider } from "./components/SidebarContext";
 

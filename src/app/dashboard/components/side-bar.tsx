@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useSidebar } from "./SidebarContext";
 import {
   LayoutDashboard,
   Users,
@@ -13,7 +14,7 @@ import {
   Settings,
   User,
   BookOpen,
-  MoreHorizontal
+  MoreHorizontal,
 } from "lucide-react";
 
 const menuGroups = [
@@ -24,7 +25,11 @@ const menuGroups = [
       { name: "Students", icon: Users, href: "/dashboard/students" },
       { name: "Courses", icon: BookOpen, href: "/dashboard/courses" },
       { name: "Purchases", icon: ShoppingBag, href: "/dashboard/purchases" },
-      { name: "Subscriptions", icon: CreditCard, href: "/dashboard/subscriptions" },
+      {
+        name: "Subscriptions",
+        icon: CreditCard,
+        href: "/dashboard/subscriptions",
+      },
       { name: "Analytics", icon: BarChart2, href: "/dashboard/analytics" },
       { name: "Payments", icon: Wallet, href: "/dashboard/payments" },
     ],
@@ -56,7 +61,6 @@ export default function SideBar() {
       aria-expanded={!collapsed}
     >
       {/* Header / Logo Area */}
-      
 
       {/* Navigation Links */}
       <div className="flex-1 overflow-y-auto overflow-x-hidden py-3 custom-mt-3">
@@ -95,7 +99,9 @@ export default function SideBar() {
                     >
                       <Icon
                         className={`min-w-5 min-h-5 ${
-                          isActive ? "text-white" : "text-gray-500 group-hover:text-gray-900"
+                          isActive
+                            ? "text-white"
+                            : "text-gray-500 group-hover:text-gray-900"
                         }`}
                         strokeWidth={isActive ? 2.5 : 2}
                       />
