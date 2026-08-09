@@ -24,13 +24,13 @@ export default function NewCoursePage() {
   const [isPublishing, setIsPublishing] = useState(false);
   const [isSavingDraft, setIsSavingDraft] = useState(false);
 
+  // Solved: Removed <CourseFormValues> generic to allow automatic type inference from zodResolver
   const {
     register,
     handleSubmit,
     formState: { errors },
-    trigger,
     getValues,
-  } = useForm<CourseFormValues>({
+  } = useForm({
     resolver: zodResolver(courseSchema),
     defaultValues: {
       title: "",
@@ -104,7 +104,7 @@ export default function NewCoursePage() {
               placeholder="e.g. Advanced Web Development"
               className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
             />
-            {errors.title && <p className="text-red-500 text-sm mt-1">{errors.title.message}</p>}
+            {errors.title && <p className="text-red-500 text-sm mt-1">{errors.title.message as string}</p>}
           </div>
 
           <div>
@@ -115,7 +115,7 @@ export default function NewCoursePage() {
               placeholder="What will students learn in this course?"
               className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
             />
-            {errors.description && <p className="text-red-500 text-sm mt-1">{errors.description.message}</p>}
+            {errors.description && <p className="text-red-500 text-sm mt-1">{errors.description.message as string}</p>}
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -130,7 +130,7 @@ export default function NewCoursePage() {
                 <option value="design">Design</option>
                 <option value="business">Business</option>
               </select>
-              {errors.category && <p className="text-red-500 text-sm mt-1">{errors.category.message}</p>}
+              {errors.category && <p className="text-red-500 text-sm mt-1">{errors.category.message as string}</p>}
             </div>
 
             <div>
@@ -140,7 +140,7 @@ export default function NewCoursePage() {
                 placeholder="e.g. 10 hours, 4 weeks"
                 className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
               />
-              {errors.duration && <p className="text-red-500 text-sm mt-1">{errors.duration.message}</p>}
+              {errors.duration && <p className="text-red-500 text-sm mt-1">{errors.duration.message as string}</p>}
             </div>
           </div>
         </section>
@@ -153,11 +153,11 @@ export default function NewCoursePage() {
             <input
               type="number"
               step="0.01"
-              {...register("price")}
+              {...register("price", { valueAsNumber: true })}
               placeholder="49.99"
               className="w-full md:w-1/3 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
             />
-            {errors.price && <p className="text-red-500 text-sm mt-1">{errors.price.message}</p>}
+            {errors.price && <p className="text-red-500 text-sm mt-1">{errors.price.message as string}</p>}
           </div>
         </section>
 

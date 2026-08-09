@@ -121,10 +121,33 @@
   * {
     @apply border-border outline-ring/50;
   }
+
+  html {
+    font-family: var(--font-sans), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+
   body {
     @apply bg-background text-foreground;
+    font-family: inherit;
   }
-  html {
-    @apply font-sans;
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-heading), Georgia, serif;
+    letter-spacing: -0.02em;
+    font-weight: 700;
+  }
+
+  p,
+  span,
+  a,
+  button,
+  input,
+  textarea,
+  label,
+  li {
+    font-family: var(--font-sans), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   }
 }
