@@ -51,6 +51,13 @@ export default function Navbar() {
               >
                 <Zap className="w-4 h-4" /> Pro
               </Link>
+              <Link
+                href="/dashboard"
+                className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-gray-900 bg-gray-100 rounded-md hover:bg-gray-200 transition-all active:scale-95"
+              >
+                <LayoutDashboard className="w-4 h-4" />
+                Dashboard
+              </Link>
             </div>
 
             {/* Separator */}
@@ -60,13 +67,6 @@ export default function Navbar() {
             <div className="flex items-center gap-3">
               {isLoaded && isSignedIn && (
                 <>
-                  <Link
-                    href="/dashboard"
-                    className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-gray-900 bg-gray-100 rounded-md hover:bg-gray-200 transition-all active:scale-95"
-                  >
-                    <LayoutDashboard className="w-4 h-4" />
-                    Dashboard
-                  </Link>
                   <Link
                     href="/billing"
                     className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-gray-600 bg-white border border-gray-200 rounded-md hover:border-gray-300 hover:text-gray-900 transition-all active:scale-95"
@@ -97,7 +97,11 @@ export default function Navbar() {
               className="p-2 text-gray-600 hover:text-black hover:bg-gray-100 rounded-md transition-colors"
               aria-label="Toggle menu"
             >
-              {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              {isOpen ? (
+                <X className="w-6 h-6" />
+              ) : (
+                <Menu className="w-6 h-6" />
+              )}
             </button>
           </div>
         </div>
@@ -127,19 +131,18 @@ export default function Navbar() {
           >
             <Zap className="w-5 h-5 text-gray-400" /> Pro
           </Link>
-             <Link
-                  href="/dashboard"
-                  onClick={() => setIsOpen(false)}
-                  className="flex items-center gap-3 px-3 py-3 text-base font-medium text-gray-900 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
-                >
-                  <LayoutDashboard className="w-5 h-5 text-gray-700" /> Dashboard
-                </Link>
+          <Link
+            href="/dashboard"
+            onClick={() => setIsOpen(false)}
+            className="flex items-center gap-3 px-3 py-3 text-base font-medium text-gray-900 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+          >
+            <LayoutDashboard className="w-5 h-5 text-gray-700" /> Dashboard
+          </Link>
 
           {/* Auth Section */}
           <div className="pt-4 mt-2 border-t border-gray-100">
             {isLoaded && isSignedIn ? (
               <div className="space-y-2">
-             
                 <Link
                   href="/billing"
                   onClick={() => setIsOpen(false)}
@@ -149,15 +152,15 @@ export default function Navbar() {
                 </Link>
                 <div className="flex items-center gap-3 px-3 py-4 mt-2 bg-gray-50 rounded-lg">
                   <UserButton afterSignOutUrl="/" />
-                  <span className="text-sm font-medium text-gray-700">Account Management</span>
+                  <span className="text-sm font-medium text-gray-700">
+                    Account Management
+                  </span>
                 </div>
               </div>
             ) : (
               <div className="px-3 py-2">
                 <SignInButton mode="modal">
-                  <button 
-                    className="w-full py-3 bg-black text-white rounded-lg font-medium shadow-sm hover:bg-gray-800 transition-colors active:scale-95"
-                  >
+                  <button className="w-full py-3 bg-black text-white rounded-lg font-medium shadow-sm hover:bg-gray-800 transition-colors active:scale-95">
                     Log in
                   </button>
                 </SignInButton>
