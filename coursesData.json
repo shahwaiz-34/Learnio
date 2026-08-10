@@ -2,37 +2,37 @@
   {
     "title": "12-Week High-Intensity Transformation Blueprint",
     "description": "A comprehensive fitness program featuring daily workout routines, nutritional guides, and video tutorials for maximum physical transformation.",
-    "imageUrl": "/course.jpg",
+    "imageUrl": "/gym.jpeg",
     "price": 54.99
   },
   {
     "title": "Scale Up: Mastering Small Business Financials",
     "description": "Learn how to manage cash flow, build financial forecasts, and understand corporate taxes to confidently scale your business operations.",
-    "imageUrl": "/course.jpg",
+    "imageUrl": "/scale-up.jpeg",
     "price": 34.99
   },
   {
     "title": "Modern Watercolor Techniques for Beginners",
     "description": "Unlocking your inner artist. Master color mixing, brush control, and fluid washes to create stunning landscape and abstract paintings.",
-    "imageUrl": "/course.jpg",
+    "imageUrl": "/art.jpeg",
     "price": 69.99
   },
   {
     "title": "Advanced Full-Stack Web Development",
     "description": "Create a feature-rich social media application using React, Node.js, and MongoDB. Implement real-time updates and cloud image uploads.",
-    "imageUrl": "/course.jpg",
+    "imageUrl": "/fullstack.jpeg",
     "price": 44.99
   },
   {
     "title": "Cinematic Portrait Photography & Editing",
     "description": "Master camera settings, natural lighting, and professional editing software workflows to capture breathtaking portrait photography.",
-    "imageUrl": "/course.jpg",
+    "imageUrl": "/camera.jpeg",
     "price": 59.99
   },
   {
     "title": "Artisanal Baking: Sourdough & Pastries",
     "description": "From flour to oven. Master the science of fermentation, dough handling, and baking techniques to create bakery-quality bread at home.",
-    "imageUrl": "/course.jpg",
+    "imageUrl": "/baking.jpeg",
     "price": 39.99
   },
   {
