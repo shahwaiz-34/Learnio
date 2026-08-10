@@ -4,7 +4,6 @@ const nextConfig: NextConfig = {
   /* config options here */
   reactCompiler: true,
   images: {
-    domains: ["images.unsplash.com"],
     remotePatterns: [
       {
         hostname: "i3.ytimg.com",

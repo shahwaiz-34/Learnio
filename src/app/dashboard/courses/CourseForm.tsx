@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { useForm } from "react-hook-form";
+import { useForm, type Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { toast } from "sonner";
@@ -37,7 +37,7 @@ export default function CourseForm({
     getValues,
     formState: { errors, isSubmitting },
   } = useForm<CourseFormValues>({
-    resolver: zodResolver(courseSchema),
+    resolver: zodResolver(courseSchema) as Resolver<CourseFormValues, any>,
     defaultValues: {
       title: "",
       description: "",
