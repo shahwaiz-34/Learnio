@@ -5,6 +5,7 @@ import { useParams } from "next/navigation";
 import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
 import { useUser } from "@clerk/nextjs";
 import { api } from "../../../../convex/_generated/api";
+import { getCourseImageUrl } from "@/lib/courseImageMap";
 import { useQuery } from "convex/react";
 import { Id } from "../../../../convex/_generated/dataModel";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -59,7 +60,7 @@ const CourseDetailPage = () => {
       <Card className="max-w-4xl mx-auto">
         <CardHeader>
           <Image
-            src={courseData.imageUrl || "/course.jpg"}
+            src={getCourseImageUrl(courseData)}
             alt={courseData.title}
             width={1200}
             height={600}

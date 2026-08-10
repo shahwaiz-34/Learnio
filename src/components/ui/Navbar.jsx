@@ -127,18 +127,19 @@ export default function Navbar() {
           >
             <Zap className="w-5 h-5 text-gray-400" /> Pro
           </Link>
-
-          {/* Auth Section */}
-          <div className="pt-4 mt-2 border-t border-gray-100">
-            {isLoaded && isSignedIn ? (
-              <div className="space-y-2">
-                <Link
+             <Link
                   href="/dashboard"
                   onClick={() => setIsOpen(false)}
                   className="flex items-center gap-3 px-3 py-3 text-base font-medium text-gray-900 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
                 >
                   <LayoutDashboard className="w-5 h-5 text-gray-700" /> Dashboard
                 </Link>
+
+          {/* Auth Section */}
+          <div className="pt-4 mt-2 border-t border-gray-100">
+            {isLoaded && isSignedIn ? (
+              <div className="space-y-2">
+             
                 <Link
                   href="/billing"
                   onClick={() => setIsOpen(false)}

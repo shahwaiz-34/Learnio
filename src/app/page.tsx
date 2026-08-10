@@ -13,6 +13,7 @@ import { Badge } from "@/components/ui/badge";
 import { SignInButton, Show } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
+import { getCourseImageUrl } from "@/lib/courseImageMap";
 
 import PurchaseButton from "../components/perchaseButton";
 
@@ -39,7 +40,7 @@ export default async function Home() {
               <Link href={`/courses/${course._id}`} className="cursor-pointer">
                 <CardHeader>
                   <Image
-                    src={course.imageUrl || "/course.jpg"}
+                    src={getCourseImageUrl(course)}
                     alt={course.title}
                     width={640}
                     height={360}

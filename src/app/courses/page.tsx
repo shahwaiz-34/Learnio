@@ -13,6 +13,7 @@ import { Badge } from "@/components/ui/badge";
 import { Show, SignInButton } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
 import PerchaseButton from "../../components/perchaseButton";
+import { getCourseImageUrl } from "@/lib/courseImageMap";
 
 const page = async () => {
   const convex = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
@@ -28,7 +29,7 @@ const page = async () => {
             <Link href={`/courses/${course._id}`} className="cursor-pointer">
               <CardHeader>
                 <Image
-                  src={course.imageUrl || "/course.jpg"}
+                  src={getCourseImageUrl(course)}
                   alt={course.title}
                   width={640}
                   height={360}
