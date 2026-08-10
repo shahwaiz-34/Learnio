@@ -76,10 +76,13 @@ export default function Header() {
       </div>
 
       <div className="flex items-center gap-2 sm:gap-4">
-        <button className="hidden sm:flex items-center gap-1.5 bg-[#0a0a0b] text-white px-3.5 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 shadow-sm transition-all active:scale-95">
-          <Plus className="w-4 h-4" strokeWidth={2.5} />
-          <span>Create</span>
-        </button>
+        <Link 
+      href="/dashboard/courses/new"
+      className="hidden sm:flex items-center gap-1.5 bg-[#0a0a0b] text-white px-3.5 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 shadow-sm transition-all active:scale-95"
+    >
+      <Plus className="w-4 h-4" strokeWidth={2.5} />
+      <span>Create</span>
+    </Link>
 
         <div className="flex items-center gap-1 border-l border-gray-200 pl-2 sm:pl-4">
           <button className="md:hidden p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900 rounded-full transition-colors">

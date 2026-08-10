@@ -28,11 +28,7 @@ const page = async () => {
             <Link href={`/courses/${course._id}`} className="cursor-pointer">
               <CardHeader>
                 <Image
-                  src={
-                    course.imageUrl?.startsWith("/")
-                      ? course.imageUrl
-                      : "/course.jpg"
-                  }
+                  src={course.imageUrl || "/course.jpg"}
                   alt={course.title}
                   width={640}
                   height={360}

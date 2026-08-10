@@ -59,11 +59,7 @@ const CourseDetailPage = () => {
       <Card className="max-w-4xl mx-auto">
         <CardHeader>
           <Image
-            src={
-              courseData.imageUrl?.startsWith("/")
-                ? courseData.imageUrl
-                : "/course.jpg"
-            }
+            src={courseData.imageUrl || "/course.jpg"}
             alt={courseData.title}
             width={1200}
             height={600}
