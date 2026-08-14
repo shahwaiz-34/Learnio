@@ -26,11 +26,11 @@ export default async function Home() {
       <main className="grow container mx-auto px-4 py-16">
         <div className="text-center mb-16">
           <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl mb-4">
-            Forge Your Path in Modern Development
+            convert your business into online way!
           </h1>
+
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Master fullstack skills through engaging, project-based learning.
-            Unlock your potential with MasterClass.
+            Check more functionalities through Sign Up
           </p>
         </div>
 
