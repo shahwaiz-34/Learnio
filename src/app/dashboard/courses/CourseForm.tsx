@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { useForm, type Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -19,6 +19,7 @@ export const courseSchema = z.object({
 export type CourseFormValues = z.infer<typeof courseSchema>;
 
 type Props = {
+  mode?: "create" | "edit";
   initialValues?: Partial<CourseFormValues>;
   onPublish?: (data: CourseFormValues) => Promise<void> | void;
   onSaveDraft?: (data: Partial<CourseFormValues>) => Promise<void> | void;
@@ -26,6 +27,7 @@ type Props = {
 };
 
 export default function CourseForm({
+  mode = "create",
   initialValues = {},
   onPublish,
   onSaveDraft,
@@ -34,6 +36,7 @@ export default function CourseForm({
   const {
     register,
     handleSubmit,
+    reset,
     getValues,
     formState: { errors, isSubmitting },
   } = useForm<CourseFormValues>({
@@ -49,11 +52,27 @@ export default function CourseForm({
     },
   });
 
+  useEffect(() => {
+    reset({
+      title: "",
+      description: "",
+      price: 0,
+      category: "",
+      duration: "",
+      requirements: "",
+      ...initialValues,
+    });
+  }, [initialValues, reset]);
+
   const publish = async (data: CourseFormValues) => {
     try {
       await onPublish?.(data);
     } catch (err) {
-      toast.error("Failed to publish course");
+      toast.error(
+        mode === "edit"
+          ? "Failed to update course"
+          : "Failed to publish course",
+      );
     }
   };
 
@@ -61,7 +80,7 @@ export default function CourseForm({
     const data = getValues();
     try {
       await onSaveDraft?.(data);
-      toast.success("Draft saved");
+      toast.success(mode === "edit" ? "Draft updated" : "Draft saved");
     } catch (err) {
       toast.error("Failed to save draft");
     }
@@ -70,9 +89,16 @@ export default function CourseForm({
   return (
     <form onSubmit={handleSubmit(publish)} className="space-y-8">
       <section className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 space-y-4">
-        <h2 className="text-xl font-semibold text-gray-800 border-b pb-2">
-          Basic Information
-        </h2>
+        <div className="flex items-center justify-between border-b pb-2">
+          <h2 className="text-xl font-semibold text-gray-800">
+            {mode === "edit" ? "Course Details" : "Basic Information"}
+          </h2>
+          {mode === "edit" && (
+            <span className="text-xs font-medium px-2.5 py-1 rounded-full bg-blue-100 text-blue-700">
+              Edit mode
+            </span>
+          )}
+        </div>
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -120,6 +146,8 @@ export default function CourseForm({
               <option value="programming">Programming</option>
               <option value="design">Design</option>
               <option value="business">Business</option>
+              <option value="languages">Languages</option>
+              <option value="marketing">Marketing</option>
             </select>
             {errors.category && (
               <p className="text-red-500 text-sm mt-1">
@@ -192,7 +220,7 @@ export default function CourseForm({
             onClick={saveDraft}
             className="px-4 py-2 bg-white border border-gray-300 rounded-md"
           >
-            Save Draft
+            {mode === "edit" ? "Save Draft" : "Save Draft"}
           </button>
           <button
             type="button"
@@ -206,7 +234,13 @@ export default function CourseForm({
             disabled={isSubmitting}
             className="px-4 py-2 bg-blue-600 text-white rounded-md"
           >
-            {isSubmitting ? "Saving..." : "Publish"}
+            {isSubmitting
+              ? mode === "edit"
+                ? "Updating..."
+                : "Saving..."
+              : mode === "edit"
+                ? "Update Course"
+                : "Publish"}
           </button>
         </div>
       </section>

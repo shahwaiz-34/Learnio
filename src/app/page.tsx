@@ -26,7 +26,7 @@ export default async function Home() {
       <main className="grow container mx-auto px-4 py-16">
         <div className="text-center mb-16">
           <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl mb-4">
-            convert your business into online way!
+            convert your business through online way!
           </h1>
 
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
