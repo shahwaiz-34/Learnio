@@ -23,12 +23,33 @@ export const createCheckoutSession = action({
       throw new ConvexError("Mismatched clerkId");
     }
 
-    const user = await ctx.runQuery(api.users.getUserByClerkId, {
+    let user = await ctx.runQuery(api.users.getUserByClerkId, {
       clerkId,
     });
 
     if (!user) {
-      throw new ConvexError("User not found");
+      const email = identity?.email;
+      if (!email) {
+        throw new ConvexError("User profile is missing an email address");
+      }
+
+      const customer = await stripe.customers.create({
+        email,
+        name: identity?.name,
+        metadata: { clerkId },
+      });
+
+      await ctx.runMutation(api.users.createUser, {
+        email,
+        name: identity?.name || email,
+        clerkId,
+        stripeCustomerId: customer.id,
+      });
+
+      user = await ctx.runQuery(api.users.getUserByClerkId, { clerkId });
+      if (!user) {
+        throw new ConvexError("Unable to create user profile");
+      }
     }
 
     const rateLimitKey = `checkout-rate-limit:${user._id}`;
